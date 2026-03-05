@@ -18,7 +18,7 @@ function Navigation() {
       </NavLink>
       <NavLink to="/profile" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
         <span className="nav-icon">👤</span>
-        <span>USER</span>
+        <span>MYPAGE</span>
       </NavLink>
     </nav>
   );

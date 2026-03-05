@@ -18,13 +18,27 @@ function AuthInitializer({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       const storedUser = localStorage.getItem('user');
-      if (!storedUser) return;
+      const isAuthPath = ['/login', '/signup'].includes(location.pathname);
+
+      if (!storedUser) {
+        if (!isAuthPath) {
+          navigate('/login');
+        }
+        return;
+      }
+
+      // If logged in and on login/signup page, redirect to home
+      if (isAuthPath) {
+        navigate('/');
+        return;
+      }
 
       try {
         await validateToken();
       } catch (err) {
         // Interceptor handles logout, but we can log here
         console.error('Session expired');
+        navigate('/login');
       }
     };
 
@@ -34,21 +48,30 @@ function AuthInitializer({ children }) {
   return children;
 }
 
+function AppContent() {
+  const location = useLocation();
+  const isAuthPath = ['/login', '/signup'].includes(location.pathname);
+
+  return (
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/my-posts" element={<MyPosts />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+      {!isAuthPath && <Navigation />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
       <AuthInitializer>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/create-post" element={<CreatePost />} />
-            <Route path="/my-posts" element={<MyPosts />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-          <Navigation />
-        </div>
+        <AppContent />
       </AuthInitializer>
     </Router>
   );
