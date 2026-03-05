@@ -12,3 +12,7 @@ export const createPost = (payload) => {
 export const fetchFeed = () => {
   return apiClient.get('/api/communities');
 };
+
+export const likePost = (id) => {
+  return apiClient.post(`/api/communities/${id}/like`);
+};
